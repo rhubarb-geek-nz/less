@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="less" Language="1033" Version="$(env.DEPVERS_less_STR4)" Manufacturer="rhubarb-geek-nz" UpgradeCode="B7564C72-16A6-4D87-8F4B-7C187F204D18">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="arm64" Description="less tool" Comments="See https://github.com/rhubarb-geek-nz/less" />
+    <MediaTemplate EmbedCab="yes" />
+    <Feature Id="ProductFeature" Title="setup" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+    <Upgrade Id="{B7564C72-16A6-4D87-8F4B-7C187F204D18}">
+      <UpgradeVersion Maximum="$(env.DEPVERS_less_STR4)" Property="OLDPRODUCTFOUND" OnlyDetect="no" IncludeMinimum="yes" IncludeMaximum="no" />
+    </Upgrade>
+    <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallInitialize" />
+    </InstallExecuteSequence>
+  </Product>
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="System64Folder" Name="System64Folder" />
+    </Directory>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ProductComponents">
+      <Component Id="less.exe" Guid="*" Directory="System64Folder" Win64="yes">
+        <File Id="less.exe" KeyPath="yes" Source="bin\arm64\less.exe" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
