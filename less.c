@@ -85,11 +85,11 @@ int wmain(int argc, wchar_t** argv)
 
 				executable[len++] = '\\';
 
-				wcscpy_s(executable + len, (sizeof(executable) / sizeof(executable[0])) - len, editor);
+				wcscpy_s(executable + len, _countof(executable) - len, editor);
 
 				if (!wcschr(editor, '.'))
 				{
-					wcscat_s(executable, sizeof(executable) / sizeof(executable[0]), L".exe");
+					wcscat_s(executable, _countof(executable), L".exe");
 				}
 
 				attr = GetFileAttributesW(executable);
@@ -112,7 +112,7 @@ int wmain(int argc, wchar_t** argv)
 		}
 	}
 
-	len = GetTempPathW(sizeof(tmpPath) / sizeof(tmpPath[0]), tmpPath);
+	len = GetTempPathW(_countof(tmpPath), tmpPath);
 
 	if (!len)
 	{
@@ -199,7 +199,7 @@ int wmain(int argc, wchar_t** argv)
 			startup.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 			startup.dwFlags = STARTF_USESTDHANDLES;
 
-			swprintf_s(cmdLine, sizeof(cmdLine) / sizeof(cmdLine[0]), L"\"%s\" \"%s\"", editor, tmpFile);
+			swprintf_s(cmdLine, _countof(cmdLine), L"\"%s\" \"%s\"", editor, tmpFile);
 
 			if (startup.dwFlags && !bStdInConsole)
 			{

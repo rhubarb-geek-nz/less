@@ -26,10 +26,6 @@ $(APP): $(SRC) $(OBJDIR) $(BINDIR) $(RESFILE)
 		/MT 						\
 		/I.							\
 		/DNDEBUG 					\
-		/D_CRT_SECURE_NO_DEPRECATE 	\
-		/D_CRT_NONSTDC_NO_DEPRECATE \
-		/DHAVE_LIMITS_H				\
-		/DHAVE_FCNTL_H				\
 		/DWIN32_LEAN_AND_MEAN		\
 		$(SRC) 						\
 		/link						\
