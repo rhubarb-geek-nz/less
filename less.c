@@ -230,8 +230,7 @@ int wmain(int argc, wchar_t** argv)
 				if (CreateProcessW(editor, cmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &startup, &info))
 				{
 					DWORD dw;
-
-					WaitForSingleObject(info.hThread, INFINITE);
+					
 					WaitForSingleObject(info.hProcess, INFINITE);
 
 					if (GetExitCodeProcess(info.hProcess, &dw))
