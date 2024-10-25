@@ -8,6 +8,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static void printWin32Error(DWORD err)
+{
+	char buf[256];
+	DWORD len = FormatMessageA(
+		FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL,
+		err,
+		0,
+		buf,
+		sizeof(buf),
+		NULL);
+
+	if (len)
+	{
+		DWORD dw;
+		WriteFile(GetStdHandle(STD_ERROR_HANDLE), buf, len, &dw, NULL);
+	}
+}
+
 static void copyFileContent(HANDLE hSrc, HANDLE hDest)
 {
 	char buf[4096];
@@ -58,7 +77,7 @@ int wmain(int argc, wchar_t** argv)
 
 	if (bStdInConsole && argc <= 1)
 	{
-		fprintf(stderr, "No files\n");
+		printWin32Error(ERROR_INVALID_PARAMETER);
 
 		return ERROR_INVALID_PARAMETER;
 	}
@@ -118,7 +137,7 @@ int wmain(int argc, wchar_t** argv)
 	{
 		DWORD dw = GetLastError();
 
-		fprintf(stderr, "GetTempPath Error %d\n", dw);
+		printWin32Error(dw);
 
 		return dw;
 	}
@@ -129,7 +148,7 @@ int wmain(int argc, wchar_t** argv)
 	{
 		DWORD dw = GetLastError();
 
-		fprintf(stderr, "GetTempFileName Error %d\n", dw);
+		printWin32Error(dw);
 
 		return dw;
 	}
@@ -145,7 +164,7 @@ int wmain(int argc, wchar_t** argv)
 	if (hTmp == INVALID_HANDLE_VALUE)
 	{
 		DWORD dw = GetLastError();
-		fprintf(stderr, "CreateFile Error %ld, %S\n", dw, tmpFile);
+		printWin32Error(dw);
 		return dw;
 	}
 
@@ -166,7 +185,7 @@ int wmain(int argc, wchar_t** argv)
 			if (hFile == INVALID_HANDLE_VALUE)
 			{
 				DWORD dw = GetLastError();
-				fprintf(stderr, "CreateFile Error %ld, %S\n", dw, fileName);
+				printWin32Error(dw);
 				exitCode = dw;
 			}
 
@@ -211,7 +230,7 @@ int wmain(int argc, wchar_t** argv)
 				if (hStdin == INVALID_HANDLE_VALUE)
 				{
 					exitCode = GetLastError();
-					fprintf(stderr, "CreateFile Error %ld, %S\n", exitCode, fileName);
+					printWin32Error(exitCode);
 				}
 				else
 				{
@@ -220,7 +239,7 @@ int wmain(int argc, wchar_t** argv)
 						0, TRUE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE))
 					{
 						exitCode = GetLastError();
-						fprintf(stderr, "DuplicateHandle Error %ld, %S\n", exitCode, fileName);
+						printWin32Error(exitCode);
 					}
 				}
 			}
@@ -230,7 +249,7 @@ int wmain(int argc, wchar_t** argv)
 				if (CreateProcessW(editor, cmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &startup, &info))
 				{
 					DWORD dw;
-					
+
 					WaitForSingleObject(info.hProcess, INFINITE);
 
 					if (GetExitCodeProcess(info.hProcess, &dw))
@@ -248,8 +267,8 @@ int wmain(int argc, wchar_t** argv)
 				else
 				{
 					DWORD dw = GetLastError();
-					fprintf(stderr, "CreateProcess Error %ld, %S\n", dw, cmdLine);
 					exitCode = dw;
+					printWin32Error(exitCode);
 				}
 			}
 		}
@@ -259,8 +278,8 @@ int wmain(int argc, wchar_t** argv)
 		if (!DeleteFileW(tmpFile))
 		{
 			DWORD dw = GetLastError();
-			fprintf(stderr, "DeleteFile Error %ld, %S\n", dw, tmpFile);
 			exitCode = dw;
+			printWin32Error(exitCode);
 		}
 	}
 

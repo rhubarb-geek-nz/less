@@ -13,7 +13,7 @@ trap
 	throw $PSItem
 }
 
-$Version = '1.0.0'
+$Version = '1.0.1'
 
 foreach ($EDITION in 'Community', 'Professional')
 {
